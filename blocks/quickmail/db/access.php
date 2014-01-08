@@ -24,8 +24,7 @@ $capabilities = array(
         'archetypes'    => array(
             'editingteacher' => CAP_PREVENT,
             'manager' => CAP_PREVENT
-        ),
-        'clonepermissionsfrom'  => 'moodle/site:manageblocks'
+        )
     ),
     'block/quickmail:cansend' => array(
         'captype' => 'write',
