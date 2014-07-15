@@ -14,25 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$capabilities = array(
+defined('MOODLE_INTERNAL') || die;
 
-    'block/filtered_course_list:myaddinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
+class block_filtered_course_list_edit_form extends block_edit_form {
 
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    ),
+    protected function specific_definition($mform) {
 
-    'block/filtered_course_list:addinstance' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    )
-);
+        // Section header title according to language file.
+        $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
+
+        // Set the title for the block.
+        $mform->addElement('text', 'config_title', get_string('configtitle', 'block_filtered_course_list'));
+        $mform->setDefault('config_title', get_string('blockname', 'block_filtered_course_list'));
+        $mform->setType('config_title', PARAM_TEXT);
+
+    }
+
+}
