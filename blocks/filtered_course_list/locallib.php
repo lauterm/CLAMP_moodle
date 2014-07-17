@@ -14,25 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$capabilities = array(
-
-    'block/filtered_course_list:myaddinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
-    ),
-
-    'block/filtered_course_list:addinstance' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
-    )
-);
+define('BLOCK_FILTERED_COURSE_LIST_ADMIN_VIEW_ALL', 'all');
+define('BLOCK_FILTERED_COURSE_LIST_ADMIN_VIEW_OWN', 'own');
+define('BLOCK_FILTERED_COURSE_LIST_DEFAULT_LABELSCOUNT', 2);
