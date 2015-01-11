@@ -73,7 +73,7 @@ foreach ($modinfo->get_sections() as $sectionnum => $section) {
         $activitytypes[$cm->modname] = get_string('modulename', $cm->modname);
     }
 }
-collatorlib::asort($activitytypes);
+core_collator::asort($activitytypes);
 
 if ($activitiesdisplayed <= REPORT_EDITDATES_ENABLE_FILTER_THRESHOLD) {
     $activitytypes = array('' => get_string('all')) + $activitytypes;
@@ -101,6 +101,7 @@ if ($mform->is_cancelled()) {
 
     $moddatesettings = array();
     $blockdatesettings = array();
+    $sectiondatesettings = array();
     $forceddatesettings = array();
 
     foreach ($data as $key => $value) {
@@ -140,6 +141,11 @@ if ($mform->is_cancelled()) {
                         if (has_capability('moodle/site:manageblocks', $coursecontext)) {
                             $blockdatesettings[$cmsettings['2']][$cmsettings['3']] = $value;
                         }
+                    } else if ($cmsettings['1'] == 'section') {
+                        // If user is capable of updating sections in course context.
+                        if (has_capability('moodle/course:update', $coursecontext)) {
+                            $sectiondatesettings[$cmsettings['2']][$cmsettings['3']] = $value;
+                        }
                     }
                 }
             }
@@ -162,6 +168,21 @@ if ($mform->is_cancelled()) {
         }
         // Update object in course_modules class.
         $DB->update_record('course_modules', $cm, true);
+    }
+
+    // Update section date settings.
+    foreach ($sectiondatesettings as $sectionid => $datesettings) {
+       $sectionsettings = array('availablefrom', 'availableuntil');
+       $section = new stdClass();
+       $section->id = $sectionid;
+       foreach($sectionsettings as $setting) {
+           if (isset($datesettings[$setting])) {
+               $section->{$setting} = $datesettings[$setting];
+           } else {
+               $section->{$setting} = 0;
+           }
+       }
+       $DB->update_record('course_sections', $section, true);
     }
 
     // Update mod date settings.
@@ -203,8 +224,9 @@ $select->set_label(get_string('activitytypefilter', 'report_editdates'));
 $select->set_help_icon('activitytypefilter', 'report_editdates');
 
 // Making log entry.
-add_to_log($course->id, 'course', 'report edit dates',
-        "report/editdates/index.php?id=$course->id", $course->id);
+$event = \report_editdates\event\report_viewed::create(
+        array('context' => $coursecontext, 'other' => array('activitytype' => $activitytype)));
+$event->trigger();
 
 // Set page title and page heading.
 $PAGE->set_title($course->shortname .': '. get_string('editdates' , 'report_editdates'));
